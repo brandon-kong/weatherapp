@@ -3,7 +3,7 @@
         <section class="login-widget">
             <div>
                 <header class="login-title">
-                    <h1 class="welcome-back">Welcome back</h1>
+                    <h1 class="welcome-back">Create account</h1>
                 </header>
             </div>
             <div class="form-section">
@@ -15,7 +15,7 @@
                     </form>
                 </div>
                 <div class="sign-up-redirect">
-                    <p>Don't have an account? <Link to="/register">Sign up</Link></p>
+                    <p>Already have an account? <Link to="/login">Sign in</Link></p>
                 </div>
                 <div class="or-separator">
                     <p>or</p>
@@ -30,6 +30,7 @@
                         <span>Continue with Microsoft Account</span>
                     </button>
                 </div>
+                <p class="tas-disclaimer">By creating an account, you are agreeing to our<Link to="/terms-and-conditions">terms and conditions</Link></p>
             </div>
         </section>
     </main>
@@ -172,6 +173,7 @@
     display: flex;
     flex-direction: column;
     gap: var(--spacing-1);
+    margin-bottom: var(--spacing-3);
 }
 
 .oauth-box {
@@ -225,7 +227,7 @@
 import Link from '@/components/Link'
 
 export default {
-    name: 'LoginView',
+    name: 'RegisterView',
 
     data() {
         return {
