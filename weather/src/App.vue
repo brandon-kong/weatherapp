@@ -1,7 +1,8 @@
 <template>
     <Navbar />
-    <router-view>
-    </router-view>
+    <div class="app-container">
+        <router-view></router-view>
+    </div>
 </template>
 
 <script>
@@ -31,6 +32,7 @@ export default {
     --dark-gray: #2d333a;
     --spacing: 8px;
     --outer-padding: calc(var(--spacing) * 10);
+    --outer-padding-mobile: calc(var(--spacing) * 5);
     --outer-padding-minimized: calc(var(--spacing) * 2) calc(var(--spacing) * 2);
     --login-widget-width: calc(var(--spacing) * 50);
     --spacing-1: var(--spacing);
@@ -48,7 +50,8 @@ export default {
 
     --navbar-height: 60px;
 
-    --box-shadow: 0 12px 40px rgba(0,0,0,0.12)
+    --box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+    --mobile-breakpoint: 600px;
 }
 
 *, :after, :before {
@@ -97,8 +100,12 @@ a:hover {
     text-decoration: none;
 }
 
-h1 {
-    display: block;
+.noselect {
+    -ms-user-select: none;
+    user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
 }
 
 </style>

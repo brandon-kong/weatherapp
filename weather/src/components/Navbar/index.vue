@@ -2,7 +2,7 @@
     <nav class="nav-container">
         <div class="logo">
             <router-link to="/">
-                <img class="" src="@/assets/imgs/logo-64.png" alt="logo">
+                <img draggable="false" class="" src="@/assets/imgs/logo-64.png" alt="logo">
             </router-link>
         </div>
     </nav>

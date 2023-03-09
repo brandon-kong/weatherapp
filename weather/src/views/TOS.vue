@@ -97,7 +97,7 @@
 
         <h3 class="section-title"><strong>Your Privacy</strong></h3>
 
-        <p>Please read Privacy Policy</p>
+        <p>Please read <Link to="/">Privacy Policy</Link></p>
 
         <h3 class="section-title"><strong>Reservation of Rights</strong></h3>
 
@@ -132,6 +132,7 @@
     margin: 0 auto;
     max-width: 800px;
     padding: var(--outer-padding);
+    padding-top: var(--navbar-height);
 }
 
 .section-title {
@@ -143,12 +144,25 @@
 ul {
     margin: var(--spacing-2) 0 var(--spacing-2) var(--spacing-5);
 }
+
+@media screen and (max-width: 600px) {
+    .tos-container {
+        padding: var(--outer-padding-mobile);
+        padding-top: var(--navbar-height);
+    }
+}
 </style>
 
 <script>
 
+import Link from '@/components/Link'
+
 export default {
     name: 'TermsAndConditions',
+
+    components: {
+        Link
+    }
 }
 
 </script>

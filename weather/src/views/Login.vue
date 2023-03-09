@@ -3,14 +3,15 @@
         <section class="login-widget">
             <div>
                 <header class="login-title">
+                    {{ password }}
                     <h1 class="welcome-back">Welcome back</h1>
                 </header>
             </div>
             <div class="form-section">
                 <div class="form-field">
-                    <form class="form-login">
-                        <input class="input-box email-field input-field" type="text" autocomplete="off" placeholder="Email address" />
-                        <input class="input-box password-field input-field" type="password" autocomplete="off" placeholder="Password" />
+                    <form novalidate class="form-login">
+                        <InputBox @inputChange="updateEmail" type="text" class="email-field" placeholder="Email address" autocomplete="off" />
+                        <InputBox @inputChange="updatePassword" type="password" class="password-field" placeholder="Password" autocomplete="off" />
                         <button class="submit-field input-field" type="submit">Continue</button>
                     </form>
                 </div>
@@ -82,11 +83,6 @@
     flex-direction: column;
 }
 
-.input-box {
-    background-color: white;
-    border: 1px solid #ccc;
-}
-
 .input-field {
     height: var(--input-height);
     border-radius: var(--input-border-radius);
@@ -95,29 +91,8 @@
     transition: border .2s ease-in-out;
 }
 
-.floating-label {
-  position: absolute;
-  pointer-events: none;
-  left: 20px;
-  top: 18px;
-  transition: 0.2s ease all;
-}
-
-.input-field:focus{
-    border: 1px solid var(--primary-color);
-}
-
-.input-field:focus ~ .floating-label,
-.input-field:not(:focus):valid ~ .floating-label{
-  top: 0px;
-  left: 10px;
-  font-size: 14px;
-  opacity: 1;
-  color: var(--primary-color);
-}
-
 .email-field {
-    margin-bottom: var(--spacing-1);
+    margin-bottom: var(--spacing-2);
 }
 
 .password-field {
@@ -223,6 +198,7 @@
 <script>
 
 import Link from '@/components/Link'
+import InputBox from '@/components/Form/InputBox'
 
 export default {
     name: 'LoginView',
@@ -235,8 +211,19 @@ export default {
     },
 
     components: {
-        Link
+        Link,
+        InputBox
     },
+
+    methods: {
+        updateEmail (value) {
+            this.email = value
+        },
+
+        updatePassword (value) {
+            this.password = value
+        },
+    }
 }
 
 </script>
