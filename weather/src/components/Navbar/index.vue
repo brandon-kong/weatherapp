@@ -5,6 +5,7 @@
                 <img draggable="false" class="logo-img" src="@/assets/imgs/logo-64.png" alt="logo">
             </router-link>
         </div>
+        <button v-if="isAuthenticated" @click="logout">Logout</button>
     </nav>
 </template>
 
@@ -35,6 +36,8 @@
 
 <script>
 
+import { useAuthStore } from '@/stores/authStore'
+
 export default {
     name: 'NavbarComponent',
     data() {
@@ -43,8 +46,16 @@ export default {
         }
     },
     methods: {
-        toggleMenu() {
-            this.isMenuOpen = !this.isMenuOpen
+        logout() {
+            const authStore = useAuthStore()
+            authStore.logout()
+        }
+    },
+
+    computed: {
+        isAuthenticated () {
+            const authStore = useAuthStore()
+            return authStore.isAuthenticated
         }
     }
 }

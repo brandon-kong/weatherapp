@@ -7,11 +7,20 @@
 
 <script>
 
+import { useAuthStore } from '@/stores/authStore'
+
 import Navbar from '@/components/Navbar'
 export default {
     name: 'App',
     components: {
         Navbar
+    },
+
+    computed: {
+        isAuthenticated () {
+            const authStore = useAuthStore()
+            return authStore.isAuthenticated
+        }
     }
 }
 

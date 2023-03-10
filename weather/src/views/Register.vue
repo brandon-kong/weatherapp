@@ -21,14 +21,8 @@
                     <p>or</p>
                 </div>
                 <div class="social-login">
-                    <button class="oauth-box google-field input-field" type="submit">
-                        <span class="brand-img google-img"></span>
-                        <span>Continue with Google</span>
-                    </button>
-                    <button class="oauth-box microsoft-field input-field" type="submit">
-                        <span class="brand-img microsoft-img"></span>
-                        <span>Continue with Microsoft Account</span>
-                    </button>
+                    <GoogleLogin />
+                    <MicrosoftLogin />
                 </div>
                 <p class="tas-disclaimer">By creating an account, you are agreeing to our<Link to="/terms-and-conditions">terms and conditions</Link></p>
             </div>
@@ -151,37 +145,7 @@
 }
 
 .oauth-box {
-    display: flex;
-    align-items: center;
-    background-color: white;
-    border: 1px solid #ccc;
-    color: var(--font-default-color);
     transition: background-color .2s ease-in-out;
-}
-
-.oauth-box:hover {
-    background-color: #f1f1f1;
-}
-
-.oauth-box:focus {
-    background-color: var(--primary-color-background);
-}
-
-.brand-img {
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    width: 1.5rem;
-    height: 1.5rem;
-    margin-right: var(--spacing-2);
-}
-
-.google-img {
-    background-image: url('~@/assets/imgs/google.svg');
-}
-
-.microsoft-img {
-    background-image: url('~@/assets/imgs/microsoft.svg');
 }
 
 @media screen and (max-width: 600px) {
@@ -199,9 +163,12 @@
 <script>
 
 import { useAuthStore } from '@/stores/authStore'
+import { googleAuthCodeLogin } from 'vue3-google-login'
 
 import Link from '@/components/Link'
 import InputBox from '@/components/Form/InputBox'
+import GoogleLogin from '@/components/OAuth/GoogleLogin'
+import MicrosoftLogin from '@/components/OAuth/MicrosoftLogin'
 
 export default {
     name: 'RegisterView',
@@ -215,7 +182,9 @@ export default {
 
     components: {
         Link,
-        InputBox
+        InputBox,
+        GoogleLogin,
+        MicrosoftLogin
     },
 
     methods: {
@@ -232,6 +201,12 @@ export default {
             await authStore.register({
                 email: this.email, 
                 password:this.password
+            })
+        },
+
+        loginWithGoogle () {
+            googleAuthCodeLogin().then((response) => {
+                console.log("Handle the response", response)
             })
         }
     }

@@ -2,6 +2,8 @@ import { defineStore } from 'pinia'
 import { useLocalStorage } from '@vueuse/core'
 import axios from 'axios'
 
+import router from '@/router'
+
 export const useAuthStore = defineStore('auth',{
     state: () => ({
         session: useLocalStorage('session', {
@@ -10,20 +12,13 @@ export const useAuthStore = defineStore('auth',{
         }),
     }),
 
-    actions: {
-        async getSession() {
-            // Check if token is set in local storage
-            // Check if token is valid
-            axios.get('http://127.0.0.1:8000/api/session')
-            .then(response => {
-                const data = response.data
-                console.log(data)
-            })
-            .catch(error => {
-                console.log(error)
-            })
-        },
+    getters: {
+        isAuthenticated () {
+            return this.session.isAuthenticated
+        }
+    },
 
+    actions: {
         async login({email, password}) {
             if (this.session.token != null) {
                 console.log('you are already logged in!')
@@ -37,11 +32,10 @@ export const useAuthStore = defineStore('auth',{
             
             .then(response => {
                 const data = response.data
-                console.log(data.token)
                 this.session.token = data.token
                 this.session.isAuthenticated = true
 
-                // Set token in local storage
+                router.push('/')
             })
             .catch(error => {
                 console.log(error)
@@ -60,15 +54,23 @@ export const useAuthStore = defineStore('auth',{
             })
             .then(response => {
                 const data = response.data
-                console.log(data.token)
                 this.session.token = data.token
                 this.session.isAuthenticated = true
 
-                // Set token in local storage
+                router.push('/')
             })
             .catch(error => {
                 console.log(error)
             })
+        },
+
+        logout () {
+            // Remove token from local storage
+            this.session.token = null
+            this.session.isAuthenticated = false
+            
+            // Redirect to login page
+            router.push('/login')
         }
     }
 })

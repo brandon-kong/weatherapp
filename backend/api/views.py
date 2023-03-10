@@ -9,6 +9,9 @@ from rest_framework import generics
 from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
 
+from google.oauth2 import id_token
+from google.auth.transport import requests
+
 # Class based view to Get User Details using Token Authentication
 class UserCreate(APIView):
     """ 
@@ -56,3 +59,23 @@ class UserSession(APIView):
             'auth': str(request.auth),  # None
         }
         return Response(content)
+    
+class GoogleView(APIView):
+    def post(self, request):
+        token = {'code': request.data.get('code')}
+        print(token)
+
+        try:
+            # Specify the CLIENT_ID of the app that accesses the backend:
+            idinfo = id_token.verify_oauth2_token(token['id_token'], requests.Request(), '396604274247-2gs6m177f9ajj2km4qhjplcmrgmkkp5l.apps.googleusercontent.com')
+            print(idinfo)
+
+            if idinfo['iss'] not in ['accounts.google.com', 'https://accounts.google.com']:
+                raise ValueError('Wrong issuer.')
+
+            return Response(idinfo)
+        except ValueError as err:
+            # Invalid token
+            print(err)
+            content = {'message': 'Invalid token'}
+            return Response(content)
