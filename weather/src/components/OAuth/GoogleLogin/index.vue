@@ -56,7 +56,9 @@ export default {
                 }).then((response) => {
                     console.log(response)
                 })
-                console.log("Handle the response", response)
+                .catch((error) => {
+                    console.log(error)
+                })
             })
         }
     }

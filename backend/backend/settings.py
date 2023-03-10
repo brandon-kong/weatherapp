@@ -39,6 +39,12 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'corsheaders',
     'social_django',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+    
     # django dependencies
     'django.contrib.admin',
     'django.contrib.auth',
@@ -149,6 +155,10 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:8081',
 ]
 
+CSRF_TRUSTED_ORIGINS = ['http://localhost:8081','https://*.127.0.0.1']
+
+
+
 # SOCIAL AUTH
 SOCIAL_AUTH_JSONFIELD_ENABLED = True
 
@@ -157,6 +167,8 @@ SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.social_uid',
     'social_core.pipeline.social_auth.auth_allowed',
     'social_core.pipeline.social_auth.social_user',
+    'social_core.pipeline.social_auth.associate_by_email',
+    'social_core.pipeline.user.create_user',
     'social_core.pipeline.social_auth.associate_user',
     'social_core.pipeline.social_auth.load_extra_data',
     'social_core.pipeline.user.user_details',

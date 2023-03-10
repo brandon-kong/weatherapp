@@ -5,14 +5,26 @@ from .serializers import UserSerializer
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
-from rest_framework import generics
+from rest_framework import serializers
 from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
+from django.http import HttpResponse
 
-from google.oauth2 import id_token
-from google.auth.transport import requests
+from django.views.decorators.csrf import ensure_csrf_cookie
+from social_django.utils import psa
 
+import requests
 # Class based view to Get User Details using Token Authentication
+
+class SocialSerializer(serializers.Serializer):
+    """
+    Serializer which accepts an OAuth2 access token.
+    """
+    access_token = serializers.CharField(
+        allow_blank=False,
+        trim_whitespace=True,
+    )
+    
 class UserCreate(APIView):
     """ 
     Creates the user. 
@@ -62,20 +74,24 @@ class UserSession(APIView):
     
 class GoogleView(APIView):
     def post(self, request):
-        token = {'code': request.data.get('code')}
-        print(token)
-
-        try:
-            # Specify the CLIENT_ID of the app that accesses the backend:
-            idinfo = id_token.verify_oauth2_token(token['id_token'], requests.Request(), '396604274247-2gs6m177f9ajj2km4qhjplcmrgmkkp5l.apps.googleusercontent.com')
-            print(idinfo)
-
-            if idinfo['iss'] not in ['accounts.google.com', 'https://accounts.google.com']:
-                raise ValueError('Wrong issuer.')
-
-            return Response(idinfo)
-        except ValueError as err:
-            # Invalid token
-            print(err)
-            content = {'message': 'Invalid token'}
-            return Response(content)
+        serializer = SocialSerializer(data=request.data)
+        code = request.data.get('code')
+        params={
+            "code": code,
+            "client_id": "396604274247-2gs6m177f9ajj2km4qhjplcmrgmkkp5l.apps.googleusercontent.com",
+            "client_secret": "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",
+            "redirect_uri": "http://localhost:8081",
+            "grant_type": "authorization_code"
+        }
+        r = requests.post('https://oauth2.googleapis.com/token', params=params)
+        print(request)
+        if 'token' in request.COOKIES:
+            return Response({'detail': 'You are already logged in!'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            if (r.status_code == 200):
+                data = r.json()
+                endpoint = Response(data, status=status.HTTP_200_OK)
+                endpoint.set_cookie('token', data['access_token'])
+                return endpoint
+            else:
+                return Response(r.json(), status=status.HTTP_400_BAD_REQUEST)
