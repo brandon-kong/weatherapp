@@ -5,6 +5,9 @@ import Home from '@/views/Home.vue'
 import Login from '@/views/Login.vue'
 import Register from '@/views/Register.vue'
 
+// Stores
+import { useAuthStore } from '@/stores/authStore'
+
 const routes = [
     {
         path: '/',
@@ -41,5 +44,18 @@ const router = createRouter({
     history: createWebHistory(),
     routes
 })
+
+router.beforeEach(async (to) => {
+    const authStore = useAuthStore()
+    if (
+      // make sure the user is authenticated
+      !authStore.session.token == null &&
+      // ❗️ Avoid an infinite redirect
+      to.name !== 'Login'
+    ) {
+      // redirect the user to the login page
+      return { name: 'Login' }
+    }
+  })
 
 export default router

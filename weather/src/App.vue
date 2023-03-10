@@ -48,7 +48,7 @@ export default {
     --input-padding: 0 16px;
     --input-font-size: 1rem;
 
-    --navbar-height: 60px;
+    --navbar-height: 50px;
 
     --box-shadow: 0 12px 40px rgba(0,0,0,0.12);
     --mobile-breakpoint: 600px;

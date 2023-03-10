@@ -3,13 +3,12 @@
         <section class="login-widget">
             <div>
                 <header class="login-title">
-                    {{ password }}
                     <h1 class="welcome-back">Welcome back</h1>
                 </header>
             </div>
             <div class="form-section">
                 <div class="form-field">
-                    <form novalidate class="form-login">
+                    <form @submit.prevent.stop="login" novalidate class="form-login">
                         <InputBox @inputChange="updateEmail" type="text" class="email-field" placeholder="Email address" autocomplete="off" />
                         <InputBox @inputChange="updatePassword" type="password" class="password-field" placeholder="Password" autocomplete="off" />
                         <button class="submit-field input-field" type="submit">Continue</button>
@@ -200,6 +199,8 @@
 import Link from '@/components/Link'
 import InputBox from '@/components/Form/InputBox'
 
+import { useAuthStore } from '@/stores/authStore'
+
 export default {
     name: 'LoginView',
 
@@ -223,6 +224,14 @@ export default {
         updatePassword (value) {
             this.password = value
         },
+
+        async login () {
+            const authStore = useAuthStore()
+            await authStore.login({
+                email: this.email, 
+                password:this.password
+            })
+        }
     }
 }
 
