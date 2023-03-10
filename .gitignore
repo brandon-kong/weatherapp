@@ -4,6 +4,7 @@ __pycache__/
 env/
 .env.local
 .env.*.local
+lib/
 
 # frontend
 node_modules/
