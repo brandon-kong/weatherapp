@@ -25,7 +25,8 @@ const routes = [
         name: 'Login',
         component: Login,
         meta: {
-            requiresAuth: false
+            requiresAuth: false,
+            title: 'Welcome back'
         }
     },
 

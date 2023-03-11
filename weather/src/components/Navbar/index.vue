@@ -1,12 +1,16 @@
 <template>
-    <nav class="nav-container">
-        <div class="logo">
-            <router-link to="/">
-                <img draggable="false" class="logo-img" src="@/assets/imgs/logo-64.png" alt="logo">
-            </router-link>
-        </div>
-        <button v-if="isAuthenticated" @click="logout">Logout</button>
-    </nav>
+    <div class="univ-nav">
+        <nav class="nav-container">
+            <div class="logo">
+                <router-link to="/">
+                    <img draggable="false" class="logo-img" src="@/assets/imgs/logo-64.png" alt="logo">
+                </router-link>
+            </div>
+            <Searchbar />
+            <button v-show="isAuthenticated" @click="logout">Logout</button>
+            <button v-show="!isAuthenticated">Log in</button>
+        </nav>
+    </div>
 </template>
 
 <style scoped>
@@ -20,7 +24,7 @@
     padding: 0 2rem;
     height: var(--navbar-height);
     background-color: #fff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid #ccc;
 }
 
 .logo {
@@ -36,6 +40,7 @@
 
 <script>
 
+import Searchbar from '@/components/Searchbar'
 import { useAuthStore } from '@/stores/authStore'
 
 export default {
@@ -44,6 +49,10 @@ export default {
         return {
             isMenuOpen: false
         }
+    },
+
+    components: {
+        Searchbar
     },
     methods: {
         logout() {
