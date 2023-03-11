@@ -12,7 +12,7 @@
             />
         </form>
         <div class="search-container">
-            <ul class="search-list">
+            <ul v-show="false" class="search-list">
                 <li v-for="(result, i) in query" :key="i"
                     :class="{ 'is-active': i === arrowIndex }"
                     class="search-suggestion"
@@ -77,16 +77,18 @@
 
     display: flex;
     align-items: center;
-    transition: all 0.2s ease;
+    transition: all 0.1s ease;
 }
 
 .search-suggestion:hover {
-    background-color: #eee;
+    background-color: var(--primary-color);
+    color: #fff;
     cursor: pointer;
 }
 
 .is-active {
-    background-color: var(--primary-color-background);
+    background-color: var(--primary-color);
+    color: #fff;
 }
 </style>
 <script>

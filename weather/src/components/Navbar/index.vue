@@ -7,8 +7,8 @@
                 </router-link>
             </div>
             <Searchbar />
-            <button v-show="isAuthenticated" @click="logout">Logout</button>
-            <button v-show="!isAuthenticated">Log in</button>
+            <button class="action-btn" v-show="isAuthenticated" @click="logout">Log out</button>
+            <button class="action-btn" v-show="!isAuthenticated">Log in</button>
         </nav>
     </div>
 </template>
@@ -31,11 +31,27 @@
     display: flex;
     align-items: center;
     height: 100%;
+    padding: var(--spacing-1) var(--spacing-2);
 }
 
 .logo-img {
     height: 40px;
 }
+
+.action-btn {
+    background-color: var(--primary-color);
+    padding: var(--spacing-1) var(--spacing-2);
+    border-radius: var(--input-border-radius);
+    cursor: pointer;
+    font-size: 1rem;
+    color: #fff;
+    transition: all 0.05s ease;
+}
+
+.action-btn:focus {
+    outline: 2px solid var(--primary-color-light);
+}
+
 </style>
 
 <script>
