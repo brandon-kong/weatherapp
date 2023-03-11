@@ -1,8 +1,10 @@
 <template>
-    <div class="">
+    <div class="search-universe">
         <form class="searchbar-container" v-on:submit.stop.prevent="forceSearchResult">
             <input class="searchbar autocomplete geoapify-autocomplete-input" type="text" placeholder="Search Locations"
-            v-model="search" @input="searchLocations"
+            v-model="search"
+            :class="boxClass"
+            @input="onInputChange"
             @focus="focusIn"
             @keydown.down="arrowDown"
             @keydown.up="arrowUp"
@@ -12,14 +14,14 @@
             />
         </form>
         <div class="search-container">
-            <ul v-show="false" class="search-list">
+            <ul v-show="query.length > 0" class="search-list">
                 <li v-for="(result, i) in query" :key="i"
                     :class="{ 'is-active': i === arrowIndex }"
                     class="search-suggestion"
-                    @click="setResult(result)"
+                    @click="setResult(result.properties.formatted)"
                     @mouseover="setArrowIndex(i)"
                     >
-                    {{ result }}
+                    {{ result.properties.formatted }}
                 </li>
             </ul>
         </div>
@@ -28,6 +30,9 @@
 
 <style scoped>
 
+.search-universe {
+    z-index: 10;
+}
 .searchbar-container {
     display: flex;
     justify-content: center;
@@ -51,8 +56,6 @@
 .searchbar:focus {
     outline: none;
     opacity: 1;
-
-    box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
 }
 
 .search-container {
@@ -71,10 +74,11 @@
 }
 
 .search-suggestion {
-    height: 2rem;
+    height: 4rem;
     width: 100%;
     padding: 1.4rem 2rem;
-
+    font-size: .8rem;
+    
     display: flex;
     align-items: center;
     transition: all 0.1s ease;
@@ -90,18 +94,32 @@
     background-color: var(--primary-color);
     color: #fff;
 }
+
+.search-open {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom: none;
+}
+
+.search-hidden {
+    border-bottom-left-radius: var(--input-border-radius);
+    border-bottom-right-radius: var(--input-border-radius);
+}
+
 </style>
 <script>
+
+import { GetAutocompleteQuery } from '@/libraries/geocoder'
 
 export default {
     name: "SearchbarComponent",
     data() {
         return {
             search: "",
-            query: [
-                'hello', 'world', 'this', 'is', 'a', 'test'
-            ],
+            query: [],
             arrowIndex: 0,
+            debounce: false,
+            boxClass: "search-hidden"
         }
     },
 
@@ -123,6 +141,53 @@ export default {
                 this.arrowIndex++;
             }
         },
+
+        setArrowIndex (index) {
+            this.arrowIndex = index;
+        },
+
+        setResult (result) {
+            this.search = result;
+            this.query = [];
+        },
+
+        onEnter () {
+            this.setResult(this.query[this.arrowIndex].properties.formatted);
+        },
+
+        onInputChange () {
+            GetAutocompleteQuery(this.search, this.weatherAutocompleteCallback)
+        },
+
+        focusOut () {
+            console.log('hi')
+            this.query = []
+            this.updateBoxClass()
+        },
+
+        weatherAutocompleteCallback (data) {
+            if (this.debounce == true) {
+                return
+            }
+            this.query = data.features
+            this.updateBoxClass()
+
+            return this.data
+        },
+
+        updateBoxClass () {
+            console.log(this.query.length)
+            if (this.query.length > 0) {
+                this.boxClass = "search-open"
+            }
+            else {
+                this.boxClass = "search-hidden"
+            }
+
+            setTimeout(() => {
+                this.debounce = false
+            }, 100)
+        }
     }
 }
 
