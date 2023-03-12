@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
+    'location_field.apps.DefaultConfig',
     
     # django dependencies
     'django.contrib.admin',

@@ -4,6 +4,7 @@ from .models import User
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 
+
 # Create your tests here.
 class AccountsTest(APITestCase):
     def setUp(self):
@@ -92,3 +93,13 @@ class AccountsTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(User.objects.count(), 1)
         self.assertEqual(len(response.data['email']), 1)
+
+def addToList(request):
+    if request.method == 'POST':
+        form = ListForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('home')
+    else:
+        form = ListForm()
+    return render(request, 'add.html', {'form': form})

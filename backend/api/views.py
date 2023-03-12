@@ -10,6 +10,8 @@ from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
 from django.http import HttpResponse
 
+from .models import SavedLocations, SavedLocation
+
 from django.views.decorators.csrf import ensure_csrf_cookie
 from social_django.utils import psa
 
@@ -52,7 +54,10 @@ class UserLogin(APIView):
         password = request.data.get("password")
         user = authenticate(email=email, password=password)
         if user is not None:
-            print('HIIII')
+            try:
+                savedList = SavedLocations.objects.get(user=user)
+            except:
+                savedList = SavedLocations.objects.create(user=user)
             token, _ = Token.objects.get_or_create(user=user)
             return Response({'token': token.key}, status=status.HTTP_200_OK)
         else:

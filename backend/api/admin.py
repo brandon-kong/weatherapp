@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 from django.utils.translation import gettext_lazy as _
 
-from .models import User
+from .models import User, SavedLocations, SavedLocation
 # Register your models here.
 
 @admin.register(User)
@@ -25,3 +25,6 @@ class UserAdmin(DjangoUserAdmin):
     list_display = ('email', 'first_name', 'last_name', 'is_staff')
     search_fields = ('email', 'first_name', 'last_name')
     ordering = ('email',)
+
+admin.site.register(SavedLocations)
+admin.site.register(SavedLocation)

@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
+from location_field.models.plain import PlainLocationField
 
 # Create your models here.
 
@@ -45,3 +46,11 @@ class User(AbstractUser):
     
     def __str__(self):
         return self.email
+
+class SavedLocations(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+
+class SavedLocation(models.Model):
+    container = models.ForeignKey(SavedLocations, on_delete=models.CASCADE)
+    location = PlainLocationField(based_fields=['user'], zoom=7)

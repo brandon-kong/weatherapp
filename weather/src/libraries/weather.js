@@ -9,7 +9,6 @@ export const GetWeatherQuery = ({ lat, lon }, cb) => {
     } else{
         return cb(null, { error: 'No lat or lon provided' })
     }
-    console.log('https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/' + encoded)
     axios({
         method: 'get',
         url: 'https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/' + encoded,
