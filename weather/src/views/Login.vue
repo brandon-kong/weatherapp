@@ -198,7 +198,8 @@ export default {
             const authStore = useAuthStore()
             await authStore.login({
                 email: this.email, 
-                password:this.password
+                password: this.password,
+                query: this.$route.query
             })
         },
 

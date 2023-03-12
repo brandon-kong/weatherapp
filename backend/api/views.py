@@ -100,3 +100,71 @@ class GoogleView(APIView):
                 return endpoint
             else:
                 return Response(r.json(), status=status.HTTP_400_BAD_REQUEST)
+            
+class addLocationToList(APIView):
+    def post(self, request):
+        try:
+            token = request.headers.get('Authorization')
+            location = request.data.get('location')
+            if (token.startswith('Bearer ')):
+                token = token[7:]
+                userToken = Token.objects.get(key=token)
+                savedUserLocations = SavedLocations.objects.get_or_create(user=userToken.user)
+                formattedLocation = f'{location["properties"]["lat"]}' + ',' + f'{location["properties"]["lon"]}'
+                try:
+                    # already exists, so remove it
+                    savedLocation = SavedLocation.objects.get(container=savedUserLocations[0], location=formattedLocation)
+                    savedLocation.delete()
+                except:
+                    # if the user hasn't saved it, then save it
+                    savedLocation = SavedLocation()
+                    savedLocation.container = savedUserLocations[0]
+                    savedLocation.location = formattedLocation
+                    savedLocation.save()
+                return Response({'detail': 'Success'}, status=status.HTTP_200_OK)
+                
+            else:
+                return Response({'detail': 'Invalid token'}, status=status.HTTP_403_FORBIDDEN)
+        except:
+            return Response({'detail': 'Invalid token'}, status=status.HTTP_403_FORBIDDEN)
+        
+class getSavedLocations(APIView):
+    def post(self, request):
+        try:
+            token = request.headers.get('Authorization')
+            if (token.startswith('Bearer ')):
+                token = token[7:]
+                userToken = Token.objects.get(key=token)
+                savedUserLocations = SavedLocations.objects.get(user=userToken.user)
+                savedLocations = SavedLocation.objects.filter(container=savedUserLocations)
+                locations = []
+                for location in savedLocations:
+                    locations.append(location.location)
+                return Response({'locations': locations}, status=status.HTTP_200_OK)
+            else:
+                return Response({'detail': 'Invalid token'}, status=status.HTTP_403_FORBIDDEN)
+        except:
+            return Response({'detail': 'Invalid token'}, status=status.HTTP_403_FORBIDDEN)
+        
+class locationIsInList(APIView):
+    def post(self, request):
+        try:
+            token = request.headers.get('Authorization')
+            location = request.data.get('location')
+            if (token.startswith('Bearer ')):
+                token = token[7:]
+                userToken = Token.objects.get(key=token)
+                formattedLocation = f'{location["properties"]["lat"]}' + ',' + f'{location["properties"]["lon"]}'
+                savedUserLocations = SavedLocations.objects.get(user=userToken.user)
+                try:
+                    savedLocations = SavedLocation.objects.get(container=savedUserLocations, location=formattedLocation)
+                except:
+                    savedLocations = None
+                if (savedLocations):
+                    return Response({'detail': True}, status=status.HTTP_200_OK)
+                else:
+                    return Response({'detail': False}, status=status.HTTP_200_OK)
+            else:
+                return Response({'detail': 'Invalid token'}, status=status.HTTP_403_FORBIDDEN)
+        except:
+            return Response({'detail': 'Invalid token'}, status=status.HTTP_403_FORBIDDEN)

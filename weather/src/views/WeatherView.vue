@@ -9,7 +9,7 @@
                 <span class="lo range-ind">L: {{ data.days[0].tempmin }}°</span>
             </div>
             <div class="addToList">
-                <button class="addToListButton" @click="addToList(location)">Add to List</button>
+                <button class="addToListButton" @click="addToList(location)">{{ locationInList && 'Remove from list' || 'Add to list' }}</button>
             </div>
         </div>
         <div class="iframe-container">
@@ -151,7 +151,9 @@ export default {
             error: null,
 
             currentTemp: 0,
-            maxTemp: 0
+            maxTemp: 0,
+            locationInList: false,
+            addToListDebounce: false
         }
     },
 
@@ -187,14 +189,58 @@ export default {
 
         reverseGeocodeCallback (data) {
             this.location = data
+            if (data) {
+                this.locationIsInList(data)
+            }
         },
 
         addToList (request) {
+            if (this.addToListDebounce) {
+                return
+            }
+            this.addToListDebounce = true
             const authStore = useAuthStore()
             if (authStore.session.isAuthenticated === false) {
-                this.$router.push('/login')
+                this.$router.push({path: '/login', query: { redirect: this.$route.fullPath } })
             } else {
-                console.log(request)
+                this.$axios.post('add-location', {
+                    location: request,
+                }, {
+                    headers: {
+                        Authorization: `Bearer ${authStore.session.token}`
+                    }
+                })
+                .then(() => {
+                    this.locationIsInList(request)
+                })
+                .catch((error) => {
+                    console.log(error)
+                })
+            }
+
+            setTimeout(() => {
+                this.addToListDebounce = false
+            }, 500)
+        },
+
+        locationIsInList (data) {
+            const authStore = useAuthStore()
+            if (authStore.session.isAuthenticated === false) {
+                return false
+            } else {
+                this.$axios.post('/location-is-in-list', {
+                    location: data
+                }, {
+                    headers: {
+                        Authorization: `Bearer ${authStore.session.token}`
+                    }
+                })
+                .then((response) => {
+                    this.locationInList = response.data.detail
+                })
+                .catch((error) => {
+                    console.log(error)
+                })
             }
         }
     }

@@ -15,11 +15,15 @@ export const useAuthStore = defineStore('auth',{
     getters: {
         isAuthenticated () {
             return this.session.isAuthenticated
+        },
+
+        token () {
+            return this.session.token
         }
     },
 
     actions: {
-        async login({email, password}) {
+        async login({email, password, query}) {
             if (this.session.token != null) {
                 console.log('you are already logged in!')
                 return
@@ -35,7 +39,10 @@ export const useAuthStore = defineStore('auth',{
                 this.session.token = data.token
                 this.session.isAuthenticated = true
 
-                router.push('/')
+                if (query && query.redirect) {
+                    router.push(query.redirect)
+                }
+                else router.push('/')
             })
             .catch(error => {
                 console.log(error)
