@@ -5,7 +5,6 @@ export const GetAutocompleteQuery = (text, cb) => {
     if (text === '') {
         cb()
     }
-    console.log('https://api.geoapify.com/v1/geocode/autocomplete?text=' + text + '&apiKey=' + apiKey)
     const config = {
         method: 'get',
         url: 'https://api.geoapify.com/v1/geocode/autocomplete?text=' + text + '&apiKey=' + apiKey,
@@ -13,7 +12,6 @@ export const GetAutocompleteQuery = (text, cb) => {
     }
     axios(config)
         .then(response => {
-            console.log(response)
             cb(response.data)
         })
         .catch(error => {

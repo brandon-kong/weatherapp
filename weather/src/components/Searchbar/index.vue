@@ -6,6 +6,7 @@
             :class="boxClass"
             @input="onInputChange"
             @focus="focusIn"
+            @focusout="focusOut"
             @keydown.down="arrowDown"
             @keydown.up="arrowUp"
             @keydown.enter="onEnter"
@@ -14,11 +15,11 @@
             />
         </form>
         <div class="search-container">
-            <ul v-show="query.length > 0" class="search-list">
+            <ul v-show="query.length > 0 && focused" class="search-list">
                 <li v-for="(result, i) in query" :key="i"
                     :class="{ 'is-active': i === arrowIndex }"
                     class="search-suggestion"
-                    @click="setResult(result.properties.formatted)"
+                    @mousedown="setResult(result)"
                     @mouseover="setArrowIndex(i)"
                     >
                     {{ result.properties.formatted }}
@@ -50,7 +51,7 @@
     outline: none;
     opacity: 0.6;
     text-align: center;
-    transition: all 0.3s ease;
+    transition: outline 0.3s ease, opacity 0.3s ease;
 }
 
 .searchbar:focus {
@@ -82,10 +83,10 @@
     display: flex;
     align-items: center;
     transition: all 0.1s ease;
+    color: #000;
 }
 
 .search-suggestion:hover {
-    background-color: var(--primary-color);
     color: #fff;
     cursor: pointer;
 }
@@ -117,15 +118,16 @@ export default {
         return {
             search: "",
             query: [],
-            arrowIndex: 0,
+            arrowIndex: -1,
             debounce: false,
+            focused: false,
             boxClass: "search-hidden"
         }
     },
 
     methods: {
         arrowUp() {
-            if (this.arrowIndex == 0) {
+            if (this.arrowIndex <= 0) {
                 this.arrowIndex = this.query.length - 1;
             }
             else {
@@ -134,7 +136,7 @@ export default {
         },
 
         arrowDown() {
-            if (this.arrowIndex == this.query.length - 1) {
+            if (this.arrowIndex >= this.query.length - 1) {
                 this.arrowIndex = 0;
             }
             else {
@@ -147,20 +149,32 @@ export default {
         },
 
         setResult (result) {
-            this.search = result;
+            this.search = result.properties.formatted;
+            this.pushResult(result);
             this.query = [];
         },
 
         onEnter () {
-            this.setResult(this.query[this.arrowIndex].properties.formatted);
+            this.setResult(this.query[this.arrowIndex]);
         },
 
         onInputChange () {
+            if (this.search.length < 3) {
+                this.query = []
+                this.updateBoxClass()
+                return
+            }
             GetAutocompleteQuery(this.search, this.weatherAutocompleteCallback)
         },
 
+        focusIn () {
+            this.focused = true
+            this.onInputChange()
+        },
+
         focusOut () {
-            console.log('hi')
+            this.focused = false
+            this.arrowIndex = -1
             this.query = []
             this.updateBoxClass()
         },
@@ -169,24 +183,36 @@ export default {
             if (this.debounce == true) {
                 return
             }
-            this.query = data.features
+            this.arrowIndex = -1
+            if (data == null) {
+                this.query = []
+                this.updateBoxClass()
+                return
+            }
+            this.query = data.features || []
             this.updateBoxClass()
 
             return this.data
         },
 
         updateBoxClass () {
-            console.log(this.query.length)
             if (this.query.length > 0) {
                 this.boxClass = "search-open"
             }
             else {
                 this.boxClass = "search-hidden"
             }
+            if (this.focused == false) {
+                this.boxClass = "search-hidden"
+            }
 
             setTimeout(() => {
                 this.debounce = false
             }, 100)
+        },
+
+        pushResult (result) {
+            this.$router.push({ name: 'Weather', params: { lat: result.properties.lat, lon: result.properties.lon }, replace: true })
         }
     }
 }

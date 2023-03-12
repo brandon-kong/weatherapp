@@ -5,6 +5,8 @@ import Home from '@/views/Home.vue'
 import Login from '@/views/Login.vue'
 import Register from '@/views/Register.vue'
 import TOS from '@/views/TOS.vue'
+import WeatherView from '@/views/WeatherView.vue'
+import WeatherHome from '@/views/WeatherHome.vue'
 import NotFound from '@/views/404.vue'
 
 // Stores
@@ -43,6 +45,24 @@ const routes = [
         path: '/terms-and-conditions',
         name: 'TermsAndConditions',
         component: TOS,
+        meta: {
+            requiresAuth: false
+        }
+    },
+
+    {
+        path: '/weather',
+        name: 'WeatherHome',
+        component: WeatherHome,
+        meta: {
+            requiresAuth: false
+        }
+    },
+
+    {
+        path: '/weather/:lon&:lat',
+        name: 'Weather',
+        component: WeatherView,
         meta: {
             requiresAuth: false
         }
