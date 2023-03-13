@@ -37,6 +37,7 @@ class UserCreate(APIView):
     """
 
     def post(self, request, format='json'):
+        print(request.data)
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
@@ -44,6 +45,8 @@ class UserCreate(APIView):
                 token = Token.objects.create(user=user)
                 json = serializer.data
                 json['token'] = token.key
+                savedList = SavedLocations.objects.create(user=user)
+                savedList.save()
                 return Response(json, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -62,6 +65,7 @@ class UserLogin(APIView):
                 savedList = SavedLocations.objects.get(user=user)
             except:
                 savedList = SavedLocations.objects.create(user=user)
+                savedList.save()
             token, _ = Token.objects.get_or_create(user=user)
             return Response({'token': token.key}, status=status.HTTP_200_OK)
         else:
