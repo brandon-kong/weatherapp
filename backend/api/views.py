@@ -10,6 +10,10 @@ from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
 from django.http import HttpResponse
 
+import environ
+env = environ.Env()
+env.read_env()
+
 from .models import SavedLocations, SavedLocation
 
 from django.views.decorators.csrf import ensure_csrf_cookie
@@ -168,3 +172,43 @@ class locationIsInList(APIView):
                 return Response({'detail': 'Invalid token'}, status=status.HTTP_403_FORBIDDEN)
         except:
             return Response({'detail': 'Invalid token'}, status=status.HTTP_403_FORBIDDEN)
+        
+class getAutocorrectQuery(APIView):
+    def post(self, request):
+        params={
+            "q": request.data.get('query'),
+            "key": env('GEOAPIFY_API_KEY')
+        }
+        url = f'https://api.geoapify.com/v1/geocode/autocomplete?text={params["q"]}&apiKey={params["key"]}'
+        r = requests.get(url)
+        if (r.status_code == 200):
+            return Response(r.json(), status=status.HTTP_200_OK)
+        else:
+            return Response({'detail': 'Invalid request'}, status=status.HTTP_400_BAD_REQUEST)
+        
+class reverseGeocode(APIView):
+    def post(self, request):
+        params={
+            "lat": request.data.get('lat'),
+            "lon": request.data.get('lon'),
+            "key": env('GEOAPIFY_API_KEY')
+        }
+        url = f'https://api.geoapify.com/v1/geocode/reverse?lat={params["lat"]}&lon={params["lon"]}&apiKey={params["key"]}'
+        r = requests.get(url)
+        if (r.status_code == 200):
+            return Response(r.json(), status=status.HTTP_200_OK)
+        else:
+            return Response({'detail': 'Invalid token'}, status=status.HTTP_403_FORBIDDEN)
+        
+class getWeatherQuery(APIView):
+    def post(self, request):
+        params={
+            "encoded": request.data.get('encoded'),
+            "key": env('VISUALCROSSINGS_API_KEY')
+        }
+        url = f'https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/{params["encoded"]}&key={params["key"]}'
+        r = requests.get(url)
+        if (r.status_code == 200):
+            return Response(r.json(), status=status.HTTP_200_OK)
+        else:
+            return Response({'detail': 'Invalid token'}, status=status.HTTP_400_BAD_REQUEST)

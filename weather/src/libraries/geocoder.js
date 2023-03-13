@@ -1,14 +1,16 @@
 import axios from 'axios'
-const apiKey = '0ca5fe98d6d244c3a5f5d753d0d5f5eb'
 
 export const GetAutocompleteQuery = (text, cb) => {
     if (text === '') {
         cb()
     }
     const config = {
-        method: 'get',
-        url: 'https://api.geoapify.com/v1/geocode/autocomplete?text=' + text + '&apiKey=' + apiKey,
-        headers: { }
+        method: 'post',
+        url: 'http://localhost:8000/api/autocomplete',
+        data: {
+            query: text
+        },
+        headers: {}
     }
     axios(config)
         .then(response => {
@@ -21,8 +23,12 @@ export const GetAutocompleteQuery = (text, cb) => {
 
 export const reverseGeocode = ({lat, lon}, cb) => {
     var config = {
-        method: 'get',
-        url: `https://api.geoapify.com/v1/geocode/reverse?lat=${lat}&lon=${lon}&apiKey=0ca5fe98d6d244c3a5f5d753d0d5f5eb`,
+        method: 'post',
+        url: `http://localhost:8000/api/reverse-geocode`,
+        data: {
+            lat: lat,
+            lon: lon
+        },
         headers: { }
       };
       

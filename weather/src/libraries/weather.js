@@ -1,17 +1,18 @@
 import axios from 'axios'
 
-const apiKey = 'GBDQESSQSEFC9JNRKB5Q8RXB8'
-
 export const GetWeatherQuery = ({ lat, lon }, cb) => {
     let encoded = ''
     if (lat !== undefined && lon !== undefined) {
-        encoded = lat + '%2C' + lon + '?unitGroup=us&key=' + apiKey + '&contentType=json'
+        encoded = lat + '%2C' + lon + '?unitGroup=us' + '&contentType=json'
     } else{
         return cb(null, { error: 'No lat or lon provided' })
     }
     axios({
-        method: 'get',
-        url: 'https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/' + encoded,
+        method: 'post',
+        url: 'http://localhost:8000/api/weather',
+        data: {
+            encoded: encoded
+        },
         headers: { }
     })
         .then(response => {

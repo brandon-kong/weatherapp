@@ -17,7 +17,6 @@ vueApp.use(createPinia())
 vueApp.use(axios, {
   baseUrl: 'http://localhost:8000/api'
 })
-
 vueApp.use(vue3GoogleLogin, {
     clientId: '396604274247-2gs6m177f9ajj2km4qhjplcmrgmkkp5l.apps.googleusercontent.com'
 })
